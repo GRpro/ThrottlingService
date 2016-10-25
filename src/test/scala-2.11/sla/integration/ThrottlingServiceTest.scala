@@ -122,10 +122,15 @@ class ThrottlingServiceTest extends FunSuite with MockFactory {
       val actual = succeded.get()
 
       assert(actual < expected)
-      println(
-        "actual = " + actual +
-          "\nexpected = " + expected +
-          "\nall = " + all.get)
+
+      val res =
+        s"""|***************************
+            |*** STRESS test results ***
+            |***************************
+            |actual = $actual
+            |expected = $expected
+            |all = $all""".stripMargin('|')
+      println(res)
     }
   }
 
@@ -162,8 +167,8 @@ class ThrottlingServiceTest extends FunSuite with MockFactory {
                   val response = clientPipeline {
                     Get(s"http://localhost:$port/metric")
                   }
-                  response.onComplete(_ =>
-                    println(s"Request completed in ${System.currentTimeMillis - startTimestamp} millis."))
+                  //                  response.onComplete(_ =>
+                  //                    println(s"Request completed in ${System.currentTimeMillis - startTimestamp} millis."))
                   // block until complete
                   Await.ready(response, 2.seconds)
                 }
@@ -201,13 +206,16 @@ class ThrottlingServiceTest extends FunSuite with MockFactory {
       assert(throttledActual < pureActual)
 
       val throttledExpected = (numUsers * rps * timeMs).toDouble / 1000
-      println(
-        "throttledExpected = " + throttledExpected +
-          "\nthrottledActual = " + throttledActual +
-          "\npureActual = " + pureActual +
-          "\noverhead = " + (pureActual.toDouble / throttledActual))
+      val res =
+        s"""|*************************
+            |*** Benchmark results ***
+            |*************************
+            |throttledExpected = $throttledExpected
+            |throttledActual = $throttledActual
+            |pureActual = $pureActual
+            |overhead = ${pureActual.toDouble / throttledActual}""".stripMargin('|')
+      println(res)
     }
 
   }
-
 }
