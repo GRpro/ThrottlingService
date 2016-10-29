@@ -121,7 +121,7 @@ class ThrottlingServiceTest extends FunSuite with MockFactory {
       val expected = (numUsers * rps * timeMs).toDouble / 1000
       val actual = succeded.get()
 
-      assert(actual < expected)
+      assert(actual <= expected)
 
       val res =
         s"""|***************************
@@ -203,7 +203,7 @@ class ThrottlingServiceTest extends FunSuite with MockFactory {
       es.shutdown()
       es.awaitTermination(Long.MaxValue, TimeUnit.NANOSECONDS)
 
-      assert(throttledActual < pureActual)
+      assert(throttledActual <= pureActual)
 
       val throttledExpected = (numUsers * rps * timeMs).toDouble / 1000
       val res =
